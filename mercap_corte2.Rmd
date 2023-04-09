@@ -24,7 +24,7 @@ library(plotly)
 
 
 
-# topix test 
+# test 
 
 ```{r}
 library(readxl)
@@ -54,6 +54,14 @@ my_theme <- function() {
 
 
 # TOPIX index
+```{r}
+library(readxl)
+topix <- read_excel("data/mercap_2do_corte.xlsx", 
+    sheet = "TOPIX_datos", range = "E1:F1038")
+topix <- as.data.frame(topix)
+topix$Fecha <- as.Date(format(topix$Fecha, "%Y-%m-%d"))
+```
+
 
 
 ```{r}
@@ -86,7 +94,9 @@ topix %>%
   scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
   geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
   geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
-  labs(x ="", y="TPX:IND")+
+  labs(x ="", 
+       y="TOPIX", 
+       caption = "Fuente: Datos de Investopedia, elaboración propia")+
   annotate(geom = "text", x = as.Date("2019-08-27"), y = 1900, label = "Pre-COVID") +
   annotate(geom = "text", x = as.Date("2020-08-27"), y = 1900, label = "COVID") +
   annotate(geom = "text", x = as.Date("2022-08-27"), y = 1600, label = "post-COVID") +
@@ -112,6 +122,20 @@ topix %>%
              nudge_y = -25,
              nudge_x = 25
              )
-             
-
 ```
+
+
+
+
+# FTSE 100
+
+```{r}
+getSymbols("^FTSE", src = "yahoo", )
+```
+
+
+
+# DJA
+
+# Nikkei
+
