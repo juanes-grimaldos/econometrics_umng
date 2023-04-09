@@ -38,7 +38,7 @@ autoplot(topix_xts, geom = "line")
 ```
 
 # settings
-define custome them 
+define custome theme
 
 ```{r}
 # Define custom theme
@@ -49,7 +49,15 @@ my_theme <- function() {
 }
 ```
 
-
+cuando no esté en la api de yahoo finance
+importación de datos del siguiente <https://mx.investing.com/indices/topix-historical-data>[link]
+```{r}
+library(readxl)
+colcap <- read_excel("data/mercap_2do_corte.xlsx", 
+    sheet = "colcap COLCAP", range = "A1:B1044")
+colcap <- as.data.frame(colcap)
+colcap$Fecha <- as.Date(format(colcap$Fecha, "%Y-%m-%d"))
+```
 
 
 # Indices Juanes
@@ -379,6 +387,690 @@ nikkei %>%
              nudge_x = 0
              )+
         geom_label(data = nikkei %>% filter(Fecha == as.Date("2023-03-09")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 600,
+             nudge_x = 0
+             )
+```
+
+#Indices Lucho
+## sps asia 50
+importación de datos con quantmond 
+```{r}
+getSymbols("^SPASIA50", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+spasia <- data.frame(date=index(SPASIA50), coredata(SPASIA50))
+spasia <- spasia[, c("date", "SPASIA50.Close")]
+colnames(spasia) <- c("Fecha", "Cierre")
+spasia$Cierre <- round(spasia$Cierre, digits = 0)
+```
+
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
+```{r}
+library(plotly)
+fig <- plot_ly(spasia, type = 'scatter', mode = 'lines')%>%
+  add_trace(x = ~Fecha, y = ~Cierre)%>%
+  layout(showlegend = F)
+fig <- fig %>%
+  layout(
+         xaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6', width = 900)
+
+
+fig
+detach("package:plotly", unload = TRUE)
+```
+
+
+```{r}
+spasia %>% 
+  ggplot(mapping = aes(x = Fecha, y =Cierre)) +
+  my_theme()+
+  geom_line() +
+  scale_y_continuous(breaks = seq(16000, 32000, by = 1500))+
+  scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
+  geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
+  geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
+  labs(x ="", 
+       y="spasia", 
+       caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
+  annotate(geom = "text", x = as.Date("2019-07-30"), y = 26500, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 20500, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 23000, label = "post-COVID")+
+    geom_label(data = spasia %>% filter(Fecha == as.Date("2019-12-17")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 500,
+             nudge_x = -30
+             )+
+    geom_label(data = spasia %>% filter(Fecha == as.Date("2020-03-19")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 0
+             )+
+      geom_label(data = spasia %>% filter(Fecha == as.Date("2020-10-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 
+             )+
+      geom_label(data = spasia %>% filter(Fecha == as.Date("2021-02-16")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 400,
+             nudge_x = 0
+             )+
+        geom_label(data = spasia %>% filter(Fecha == as.Date("2022-03-08")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -150,
+             nudge_x = 0
+             )+
+        geom_label(data = spasia %>% filter(Fecha == as.Date("2023-03-09")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 600,
+             nudge_x = 0
+             )
+```
+
+## Russell 1000
+importación de datos con quantmond 
+```{r}
+getSymbols("^RUI", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+rui1000 <- data.frame(date=index(RUI), coredata(RUI))
+rui1000 <- rui1000[, c("date", "RUI.Close")]
+colnames(rui1000) <- c("Fecha", "Cierre")
+rui1000$Cierre <- round(rui1000$Cierre, digits = 0)
+```
+
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
+```{r}
+library(plotly)
+fig <- plot_ly(rui1000, type = 'scatter', mode = 'lines')%>%
+  add_trace(x = ~Fecha, y = ~Cierre)%>%
+  layout(showlegend = F)
+fig <- fig %>%
+  layout(
+         xaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6', width = 900)
+
+
+fig
+detach("package:plotly", unload = TRUE)
+```
+
+
+```{r}
+rui1000 %>% 
+  ggplot(mapping = aes(x = Fecha, y =Cierre)) +
+  my_theme()+
+  geom_line() +
+  scale_y_continuous(breaks = seq(16000, 32000, by = 1500))+
+  scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
+  geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
+  geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
+  labs(x ="", 
+       y="rui1000", 
+       caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
+  annotate(geom = "text", x = as.Date("2019-07-30"), y = 26500, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 20500, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 23000, label = "post-COVID")+
+    geom_label(data = rui1000 %>% filter(Fecha == as.Date("2019-12-17")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 500,
+             nudge_x = -30
+             )+
+    geom_label(data = rui1000 %>% filter(Fecha == as.Date("2020-03-19")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 0
+             )+
+      geom_label(data = rui1000 %>% filter(Fecha == as.Date("2020-10-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 
+             )+
+      geom_label(data = rui1000 %>% filter(Fecha == as.Date("2021-02-16")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 400,
+             nudge_x = 0
+             )+
+        geom_label(data = rui1000 %>% filter(Fecha == as.Date("2022-03-08")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -150,
+             nudge_x = 0
+             )+
+        geom_label(data = rui1000 %>% filter(Fecha == as.Date("2023-03-09")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 600,
+             nudge_x = 0
+             )
+```
+
+## CAC40
+
+importación de datos con quantmond 
+```{r}
+getSymbols("^FCHI", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+CAC40 <- data.frame(date=index(FCHI), coredata(FCHI))
+CAC40 <- CAC40[, c("date", "FCHI.Close")]
+colnames(CAC40) <- c("Fecha", "Cierre")
+CAC40$Cierre <- round(CAC40$Cierre, digits = 0)
+```
+
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
+```{r}
+library(plotly)
+fig <- plot_ly(CAC40, type = 'scatter', mode = 'lines')%>%
+  add_trace(x = ~Fecha, y = ~Cierre)%>%
+  layout(showlegend = F)
+fig <- fig %>%
+  layout(
+         xaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6', width = 900)
+
+
+fig
+detach("package:plotly", unload = TRUE)
+```
+
+
+```{r}
+CAC40 %>% 
+  ggplot(mapping = aes(x = Fecha, y =Cierre)) +
+  my_theme()+
+  geom_line() +
+  scale_y_continuous(breaks = seq(16000, 32000, by = 1500))+
+  scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
+  geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
+  geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
+  labs(x ="", 
+       y="CAC40", 
+       caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
+  annotate(geom = "text", x = as.Date("2019-07-30"), y = 26500, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 20500, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 23000, label = "post-COVID")+
+    geom_label(data = CAC40 %>% filter(Fecha == as.Date("2019-12-17")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 500,
+             nudge_x = -30
+             )+
+    geom_label(data = CAC40 %>% filter(Fecha == as.Date("2020-03-19")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 0
+             )+
+      geom_label(data = CAC40 %>% filter(Fecha == as.Date("2020-10-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 
+             )+
+      geom_label(data = CAC40 %>% filter(Fecha == as.Date("2021-02-16")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 400,
+             nudge_x = 0
+             )+
+        geom_label(data = CAC40 %>% filter(Fecha == as.Date("2022-03-08")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -150,
+             nudge_x = 0
+             )+
+        geom_label(data = CAC40 %>% filter(Fecha == as.Date("2023-03-09")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 600,
+             nudge_x = 0
+             )
+```
+#Indices Andy 
+##Bovespa
+
+importación de datos con quantmond 
+```{r}
+getSymbols("^BVSP", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+bovespa <- data.frame(date=index(BVSP), coredata(BVSP))
+bovespa <- bovespa[, c("date", "BVSP.Close")]
+colnames(bovespa) <- c("Fecha", "Cierre")
+bovespa$Cierre <- round(bovespa$Cierre, digits = 0)
+```
+
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
+```{r}
+library(plotly)
+fig <- plot_ly(bovespa, type = 'scatter', mode = 'lines')%>%
+  add_trace(x = ~Fecha, y = ~Cierre)%>%
+  layout(showlegend = F)
+fig <- fig %>%
+  layout(
+         xaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6', width = 900)
+
+
+fig
+detach("package:plotly", unload = TRUE)
+```
+
+
+```{r}
+bovespa %>% 
+  ggplot(mapping = aes(x = Fecha, y =Cierre)) +
+  my_theme()+
+  geom_line() +
+  scale_y_continuous(breaks = seq(50000, 133000, by = 15000))+
+  scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
+  geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
+  geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
+  labs(x ="", 
+       y="bovespa", 
+       caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
+  annotate(geom = "text", x = as.Date("2019-07-30"), y = 80000, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 80000, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 80000, label = "post-COVID")+
+    geom_label(data = bovespa %>% filter(Fecha == as.Date("2019-12-17")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 500,
+             nudge_x = -30
+             )+
+    geom_label(data = bovespa %>% filter(Fecha == as.Date("2020-03-19")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 0
+             )+
+      geom_label(data = bovespa %>% filter(Fecha == as.Date("2020-10-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 
+             )+
+      geom_label(data = bovespa %>% filter(Fecha == as.Date("2021-02-16")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 400,
+             nudge_x = 0
+             )+
+        geom_label(data = bovespa %>% filter(Fecha == as.Date("2022-03-08")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -150,
+             nudge_x = 0
+             )+
+        geom_label(data = bovespa %>% filter(Fecha == as.Date("2023-03-09")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 600,
+             nudge_x = 0
+             )
+```
+##Chile !!
+
+##Colcap 25
+
+importación de datos con quantmond 
+```{r}
+getSymbols("^BVSP", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+bovespa <- data.frame(date=index(BVSP), coredata(BVSP))
+bovespa <- bovespa[, c("date", "BVSP.Close")]
+colnames(bovespa) <- c("Fecha", "Cierre")
+bovespa$Cierre <- round(bovespa$Cierre, digits = 0)
+```
+
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
+```{r}
+library(plotly)
+fig <- plot_ly(bovespa, type = 'scatter', mode = 'lines')%>%
+  add_trace(x = ~Fecha, y = ~Cierre)%>%
+  layout(showlegend = F)
+fig <- fig %>%
+  layout(
+         xaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6', width = 900)
+
+
+fig
+detach("package:plotly", unload = TRUE)
+```
+
+
+```{r}
+bovespa %>% 
+  ggplot(mapping = aes(x = Fecha, y =Cierre)) +
+  my_theme()+
+  geom_line() +
+  scale_y_continuous(breaks = seq(16000, 32000, by = 1500))+
+  scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
+  geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
+  geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
+  labs(x ="", 
+       y="bovespa", 
+       caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
+  annotate(geom = "text", x = as.Date("2019-07-30"), y = 26500, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 20500, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 23000, label = "post-COVID")+
+    geom_label(data = bovespa %>% filter(Fecha == as.Date("2019-12-17")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 500,
+             nudge_x = -30
+             )+
+    geom_label(data = bovespa %>% filter(Fecha == as.Date("2020-03-19")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 0
+             )+
+      geom_label(data = bovespa %>% filter(Fecha == as.Date("2020-10-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 
+             )+
+      geom_label(data = bovespa %>% filter(Fecha == as.Date("2021-02-16")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 400,
+             nudge_x = 0
+             )+
+        geom_label(data = bovespa %>% filter(Fecha == as.Date("2022-03-08")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -150,
+             nudge_x = 0
+             )+
+        geom_label(data = bovespa %>% filter(Fecha == as.Date("2023-03-09")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 600,
+             nudge_x = 0
+             )
+```
+##Merval
+
+importación de datos con quantmond 
+```{r}
+getSymbols("M.BA", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+merval <- data.frame(date=index(M.BA), coredata(M.BA))
+merval <- merval[, c("date", "M.BA.Close")]
+colnames(merval) <- c("Fecha", "Cierre")
+merval$Cierre <- round(merval$Cierre, digits = 0)
+```
+
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
+```{r}
+library(plotly)
+fig <- plot_ly(merval, type = 'scatter', mode = 'lines')%>%
+  add_trace(x = ~Fecha, y = ~Cierre)%>%
+  layout(showlegend = F)
+fig <- fig %>%
+  layout(
+         xaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6', width = 900)
+
+
+fig
+detach("package:plotly", unload = TRUE)
+```
+
+
+```{r}
+merval %>% 
+  ggplot(mapping = aes(x = Fecha, y =Cierre)) +
+  my_theme()+
+  geom_line() +
+  scale_y_continuous(breaks = seq(16000, 32000, by = 1500))+
+  scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
+  geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
+  geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
+  labs(x ="", 
+       y="merval", 
+       caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
+  annotate(geom = "text", x = as.Date("2019-07-30"), y = 26500, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 20500, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 23000, label = "post-COVID")+
+    geom_label(data = merval %>% filter(Fecha == as.Date("2019-12-17")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 500,
+             nudge_x = -30
+             )+
+    geom_label(data = merval %>% filter(Fecha == as.Date("2020-03-19")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 0
+             )+
+      geom_label(data = merval %>% filter(Fecha == as.Date("2020-10-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 
+             )+
+      geom_label(data = merval %>% filter(Fecha == as.Date("2021-02-16")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 400,
+             nudge_x = 0
+             )+
+        geom_label(data = merval %>% filter(Fecha == as.Date("2022-03-08")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -150,
+             nudge_x = 0
+             )+
+        geom_label(data = merval %>% filter(Fecha == as.Date("2023-03-09")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 600,
+             nudge_x = 0
+             )
+```
+##MEXX
+
+importación de datos con quantmond 
+```{r}
+getSymbols("^BVSP", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+merval <- data.frame(date=index(BVSP), coredata(BVSP))
+merval <- merval[, c("date", "BVSP.Close")]
+colnames(merval) <- c("Fecha", "Cierre")
+merval$Cierre <- round(merval$Cierre, digits = 0)
+```
+
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
+```{r}
+library(plotly)
+fig <- plot_ly(merval, type = 'scatter', mode = 'lines')%>%
+  add_trace(x = ~Fecha, y = ~Cierre)%>%
+  layout(showlegend = F)
+fig <- fig %>%
+  layout(
+         xaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6', width = 900)
+
+
+fig
+detach("package:plotly", unload = TRUE)
+```
+
+
+```{r}
+merval %>% 
+  ggplot(mapping = aes(x = Fecha, y =Cierre)) +
+  my_theme()+
+  geom_line() +
+  scale_y_continuous(breaks = seq(16000, 32000, by = 1500))+
+  scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
+  geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
+  geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
+  labs(x ="", 
+       y="merval", 
+       caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
+  annotate(geom = "text", x = as.Date("2019-07-30"), y = 26500, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 20500, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 23000, label = "post-COVID")+
+    geom_label(data = merval %>% filter(Fecha == as.Date("2019-12-17")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 500,
+             nudge_x = -30
+             )+
+    geom_label(data = merval %>% filter(Fecha == as.Date("2020-03-19")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 0
+             )+
+      geom_label(data = merval %>% filter(Fecha == as.Date("2020-10-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 
+             )+
+      geom_label(data = merval %>% filter(Fecha == as.Date("2021-02-16")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 400,
+             nudge_x = 0
+             )+
+        geom_label(data = merval %>% filter(Fecha == as.Date("2022-03-08")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -150,
+             nudge_x = 0
+             )+
+        geom_label(data = merval %>% filter(Fecha == as.Date("2023-03-09")), 
              aes(label = Cierre), 
              size = 3, 
              color = "black", 
