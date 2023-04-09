@@ -20,10 +20,6 @@ library(magrittr)
 library(plotly)
 ```
 
-
-
-
-
 # test 
 
 ```{r}
@@ -40,6 +36,8 @@ chartSeries(topix_xts, TA=NULL)
 
 autoplot(topix_xts, geom = "line")
 ```
+
+# settings
 define custome them 
 
 ```{r}
@@ -53,7 +51,10 @@ my_theme <- function() {
 
 
 
-# TOPIX index
+
+# Indices Juanes
+## TOPIX index
+importación de datos del siguiente <https://mx.investing.com/indices/topix-historical-data>[link]
 ```{r}
 library(readxl)
 topix <- read_excel("data/mercap_2do_corte.xlsx", 
@@ -62,8 +63,7 @@ topix <- as.data.frame(topix)
 topix$Fecha <- as.Date(format(topix$Fecha, "%Y-%m-%d"))
 ```
 
-
-
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
 ```{r}
 library(plotly)
 fig <- plot_ly(topix, type = 'scatter', mode = 'lines')%>%
@@ -81,10 +81,10 @@ fig <- fig %>%
 
 
 fig
-detach("package:ggplot2", unload = TRUE)
+detach("package:plotly", unload = TRUE)
 ```
 
-
+grafica para exportar 
 ```{r}
 topix %>% 
   ggplot(mapping = aes(x = Fecha, y = Cierre)) +
@@ -125,17 +125,265 @@ topix %>%
 ```
 
 
+## FTSE 100
 
-
-# FTSE 100
-
+importación de datos con quantmond 
 ```{r}
-getSymbols("^FTSE", src = "yahoo", )
+getSymbols("^FTSE", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+ftse <- data.frame(date=index(FTSE), coredata(FTSE))
+ftse <- ftse[, c("date", "FTSE.Close")]
+colnames(ftse) <- c("Fecha", "Cierre")
+ftse$Cierre <- round(ftse$Cierre, digits = 0)
+```
+
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
+```{r}
+library(plotly)
+fig <- plot_ly(ftse, type = 'scatter', mode = 'lines')%>%
+  add_trace(x = ~Fecha, y = ~Cierre)%>%
+  layout(showlegend = F)
+fig <- fig %>%
+  layout(
+         xaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6', width = 900)
+
+
+fig
+detach("package:plotly", unload = TRUE)
 ```
 
 
+```{r}
+ftse %>% 
+  ggplot(mapping = aes(x = Fecha, y =Cierre)) +
+  my_theme()+
+  geom_line() +
+  scale_y_continuous(breaks = seq(5000, 8100, by = 1000))+
+  scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
+  geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
+  geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
+  labs(x ="", 
+       y="FTSE 100", 
+       caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
+  annotate(geom = "text", x = as.Date("2019-06-20"), y = 6800, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 6800, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 6000, label = "post-COVID")+
+    geom_label(data = ftse %>% filter(Fecha == as.Date("2019-07-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 100,
+             nudge_x = -50
+             )+
+    geom_label(data = ftse %>% filter(Fecha == as.Date("2020-03-23")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 50,
+             nudge_x = 75
+             )+
+      geom_label(data = ftse %>% filter(Fecha == as.Date("2023-01-16")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 150,
+             nudge_x = -30
+             )
+```
 
-# DJA
 
-# Nikkei
+## DJA
+importación de datos con quantmond 
+```{r}
+getSymbols("^DJA", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+dja <- data.frame(date=index(DJA), coredata(DJA))
+dja <- dja[, c("date", "DJA.Close")]
+colnames(dja) <- c("Fecha", "Cierre")
+dja$Cierre <- round(dja$Cierre, digits = 0)
+```
 
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
+```{r}
+library(plotly)
+fig <- plot_ly(dja, type = 'scatter', mode = 'lines')%>%
+  add_trace(x = ~Fecha, y = ~Cierre)%>%
+  layout(showlegend = F)
+fig <- fig %>%
+  layout(
+         xaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6', width = 900)
+
+
+fig
+detach("package:plotly", unload = TRUE)
+```
+
+
+```{r}
+dja %>% 
+  ggplot(mapping = aes(x = Fecha, y =Cierre)) +
+  my_theme()+
+  geom_line() +
+  scale_y_continuous(breaks = seq(5000, 13100, by = 1000))+
+  scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
+  geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
+  geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
+  labs(x ="", 
+       y="DJA", 
+       caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
+  annotate(geom = "text", x = as.Date("2019-07-30"), y = 10000, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 6800, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 8500, label = "post-COVID")+
+    geom_label(data = dja %>% filter(Fecha == as.Date("2019-07-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 300,
+             nudge_x = 0
+             )+
+    geom_label(data = dja %>% filter(Fecha == as.Date("2020-03-23")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 50,
+             nudge_x = 0
+             )+
+      geom_label(data = dja %>% filter(Fecha == as.Date("2021-12-29")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 150,
+             nudge_x = -30
+             )+
+      geom_label(data = dja %>% filter(Fecha == as.Date("2022-08-12")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 200,
+             nudge_x = 0
+             )+
+        geom_label(data = dja %>% filter(Fecha == as.Date("2022-09-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -150,
+             nudge_x = 0
+             )
+```
+
+
+## Nikkei
+
+importación de datos con quantmond 
+```{r}
+getSymbols("^N225", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+nikkei <- data.frame(date=index(N225), coredata(N225))
+nikkei <- nikkei[, c("date", "N225.Close")]
+colnames(nikkei) <- c("Fecha", "Cierre")
+nikkei$Cierre <- round(nikkei$Cierre, digits = 0)
+```
+
+grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
+```{r}
+library(plotly)
+fig <- plot_ly(nikkei, type = 'scatter', mode = 'lines')%>%
+  add_trace(x = ~Fecha, y = ~Cierre)%>%
+  layout(showlegend = F)
+fig <- fig %>%
+  layout(
+         xaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6', width = 900)
+
+
+fig
+detach("package:plotly", unload = TRUE)
+```
+
+
+```{r}
+nikkei %>% 
+  ggplot(mapping = aes(x = Fecha, y =Cierre)) +
+  my_theme()+
+  geom_line() +
+  scale_y_continuous(breaks = seq(16000, 32000, by = 1500))+
+  scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
+  geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
+  geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
+  labs(x ="", 
+       y="Nikkei", 
+       caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
+  annotate(geom = "text", x = as.Date("2019-07-30"), y = 26500, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 20500, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 23000, label = "post-COVID")+
+    geom_label(data = nikkei %>% filter(Fecha == as.Date("2019-12-17")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 500,
+             nudge_x = -30
+             )+
+    geom_label(data = nikkei %>% filter(Fecha == as.Date("2020-03-19")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 0
+             )+
+      geom_label(data = nikkei %>% filter(Fecha == as.Date("2020-10-30")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -500,
+             nudge_x = 
+             )+
+      geom_label(data = nikkei %>% filter(Fecha == as.Date("2021-02-16")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 400,
+             nudge_x = 0
+             )+
+        geom_label(data = nikkei %>% filter(Fecha == as.Date("2022-03-08")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = -150,
+             nudge_x = 0
+             )+
+        geom_label(data = nikkei %>% filter(Fecha == as.Date("2023-03-09")), 
+             aes(label = Cierre), 
+             size = 3, 
+             color = "black", 
+             fontface = "bold",
+             nudge_y = 600,
+             nudge_x = 0
+             )
+```
