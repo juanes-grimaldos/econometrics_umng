@@ -60,6 +60,14 @@ colcap$Fecha <- as.Date(format(colcap$Fecha, "%Y-%m-%d"))
 ```
 
 
+promedios 
+```{r}
+df %>% 
+  filter(date < as.Date("2023-04-09")) %>% 
+  summarise(avg_value = mean(value), max_value = max(value), min_value = min(value))
+```
+
+
 # Indices Juanes
 ## TOPIX index
 importación de datos del siguiente <https://mx.investing.com/indices/topix-historical-data>[link]
@@ -792,17 +800,17 @@ bovespa %>%
 
 importación de datos con quantmond 
 ```{r}
-getSymbols("^BVSP", src = "yahoo", from = "2019-01-01", periodicity = "daily")
-bovespa <- data.frame(date=index(BVSP), coredata(BVSP))
-bovespa <- bovespa[, c("date", "BVSP.Close")]
-colnames(bovespa) <- c("Fecha", "Cierre")
-bovespa$Cierre <- round(bovespa$Cierre, digits = 0)
+library(readxl)
+colcap <- read_excel("data/mercap_2do_corte.xlsx", 
+    sheet = "TOPIX COLCAP", range = "A1:B1044")
+colcap <- as.data.frame(colcap)
+colcap$Fecha <- as.Date(format(colcap$Fecha, "%Y-%m-%d"))
 ```
 
 grafica para analizar, es mejor correr en la consola para suar el Viewer de RStudio 
 ```{r}
 library(plotly)
-fig <- plot_ly(bovespa, type = 'scatter', mode = 'lines')%>%
+fig <- plot_ly(colcap, type = 'scatter', mode = 'lines')%>%
   add_trace(x = ~Fecha, y = ~Cierre)%>%
   layout(showlegend = F)
 fig <- fig %>%
@@ -822,7 +830,7 @@ detach("package:plotly", unload = TRUE)
 
 
 ```{r}
-bovespa %>% 
+colcap %>% 
   ggplot(mapping = aes(x = Fecha, y =Cierre)) +
   my_theme()+
   geom_line() +
@@ -831,12 +839,12 @@ bovespa %>%
   geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
   geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
   labs(x ="", 
-       y="bovespa", 
+       y="colcap", 
        caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
   annotate(geom = "text", x = as.Date("2019-07-30"), y = 26500, label = "Pre-COVID") +
   annotate(geom = "text", x = as.Date("2020-08-12"), y = 20500, label = "COVID") +
   annotate(geom = "text", x = as.Date("2022-03-27"), y = 23000, label = "post-COVID")+
-    geom_label(data = bovespa %>% filter(Fecha == as.Date("2019-12-17")), 
+    geom_label(data = colcap %>% filter(Fecha == as.Date("2019-12-17")), 
              aes(label = Cierre), 
              size = 3, 
              color = "black", 
@@ -844,7 +852,7 @@ bovespa %>%
              nudge_y = 500,
              nudge_x = -30
              )+
-    geom_label(data = bovespa %>% filter(Fecha == as.Date("2020-03-19")), 
+    geom_label(data = colcap %>% filter(Fecha == as.Date("2020-03-19")), 
              aes(label = Cierre), 
              size = 3, 
              color = "black", 
@@ -852,7 +860,7 @@ bovespa %>%
              nudge_y = -500,
              nudge_x = 0
              )+
-      geom_label(data = bovespa %>% filter(Fecha == as.Date("2020-10-30")), 
+      geom_label(data = colcap %>% filter(Fecha == as.Date("2020-10-30")), 
              aes(label = Cierre), 
              size = 3, 
              color = "black", 
@@ -860,7 +868,7 @@ bovespa %>%
              nudge_y = -500,
              nudge_x = 
              )+
-      geom_label(data = bovespa %>% filter(Fecha == as.Date("2021-02-16")), 
+      geom_label(data = colcap %>% filter(Fecha == as.Date("2021-02-16")), 
              aes(label = Cierre), 
              size = 3, 
              color = "black", 
@@ -868,7 +876,7 @@ bovespa %>%
              nudge_y = 400,
              nudge_x = 0
              )+
-        geom_label(data = bovespa %>% filter(Fecha == as.Date("2022-03-08")), 
+        geom_label(data = colcap %>% filter(Fecha == as.Date("2022-03-08")), 
              aes(label = Cierre), 
              size = 3, 
              color = "black", 
@@ -876,7 +884,7 @@ bovespa %>%
              nudge_y = -150,
              nudge_x = 0
              )+
-        geom_label(data = bovespa %>% filter(Fecha == as.Date("2023-03-09")), 
+        geom_label(data = colcap %>% filter(Fecha == as.Date("2023-03-09")), 
              aes(label = Cierre), 
              size = 3, 
              color = "black", 
