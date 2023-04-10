@@ -61,17 +61,21 @@ colcap$Fecha <- as.Date(format(colcap$Fecha, "%Y-%m-%d"))
 
 
 ```{r}
-df %>% 
-  filter(date >= as.Date("2022-04-09") & date <= as.Date("2023-01-09")) %>% 
-  summarise(avg_value = mean(value), max_value = max(value), min_value = min(value))
+nikkei %>% 
+  filter(Fecha >= as.Date("2022-12-30") & Fecha <= as.Date("2023-01-01")) %>% 
+  summarise(avg_value = mean(Cierre), max_value = max(Cierre), min_value = min(Cierre))
 ```
 
 
 promedios 
 ```{r}
-merval %>% 
-  filter(Fecha < as.Date("2023-01-01")) %>% 
+nikkei %>% 
+  filter(Fecha > as.Date("2023-01-01")) %>% 
   summarise(avg_value = mean(Cierre), max_value = max(Cierre), min_value = min(Cierre))
+```
+```{r}
+nikkei %>% 
+  filter(Cierre == 30670)
 ```
 
 
@@ -186,7 +190,7 @@ ftse %>%
   ggplot(mapping = aes(x = Fecha, y =Cierre)) +
   my_theme()+
   geom_line() +
-  scale_y_continuous(breaks = seq(5000, 8100, by = 1000))+
+  scale_y_continuous(breaks = seq(5000, 8100, by = 500))+
   scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
   geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
   geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
@@ -226,9 +230,9 @@ ftse %>%
 ## DJA
 importación de datos con quantmond 
 ```{r}
-getSymbols("^DJA", src = "yahoo", from = "2019-01-01", periodicity = "daily")
-dja <- data.frame(date=index(DJA), coredata(DJA))
-dja <- dja[, c("date", "DJA.Close")]
+getSymbols("^DJI", src = "yahoo", from = "2019-01-01", periodicity = "daily")
+dja <- data.frame(date=index(DJI), coredata(DJI))
+dja <- dja[, c("date", "DJI.Close")]
 colnames(dja) <- c("Fecha", "Cierre")
 dja$Cierre <- round(dja$Cierre, digits = 0)
 ```
@@ -260,17 +264,17 @@ dja %>%
   ggplot(mapping = aes(x = Fecha, y =Cierre)) +
   my_theme()+
   geom_line() +
-  scale_y_continuous(breaks = seq(5000, 13100, by = 1000))+
+  scale_y_continuous(breaks = seq(17000, 38000, by = 5000))+
   scale_x_date(date_breaks = "6 month", date_labels = "%b %y")+
   geom_vline(xintercept = as.Date("2020-01-27"), color = "blue", linetype="longdash") +
   geom_vline(xintercept = as.Date("2021-01-27"), color = "blue", linetype="longdash") +
   labs(x ="", 
-       y="DJA", 
+       y="DJI", 
        caption = "Fuente: Datos de Yahoo Finance, elaboración propia.")+
-  annotate(geom = "text", x = as.Date("2019-07-30"), y = 10000, label = "Pre-COVID") +
-  annotate(geom = "text", x = as.Date("2020-08-12"), y = 6800, label = "COVID") +
-  annotate(geom = "text", x = as.Date("2022-03-27"), y = 8500, label = "post-COVID")+
-    geom_label(data = dja %>% filter(Fecha == as.Date("2019-07-30")), 
+  annotate(geom = "text", x = as.Date("2019-07-30"), y = 22000, label = "Pre-COVID") +
+  annotate(geom = "text", x = as.Date("2020-08-12"), y = 22000, label = "COVID") +
+  annotate(geom = "text", x = as.Date("2022-03-27"), y = 22000, label = "post-COVID")+
+    geom_label(data = dja %>% filter(Fecha == as.Date("2019-12-27")), 
              aes(label = Cierre), 
              size = 3, 
              color = "black", 
